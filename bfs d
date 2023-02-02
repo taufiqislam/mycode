@@ -1,0 +1,137 @@
+#pragma GCC Optimize ("Ofast")
+#include<bits/stdc++.h>
+#include<ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#define ll long long
+#define N '\n'
+#define pb push_back
+#define pob pop_back
+#define ff first
+#define ss second
+#define bb begin()
+#define ee end()
+#define fastIO() ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#define ordered_set tree<int, null_type,less<int>, rb_tree_tag,tree_order_statistics_node_update>
+using namespace std;
+using namespace __gnu_pbds;
+
+ll dp[20][20];
+ll cp[20][20];
+ll pos[11][11];
+ll n,m;
+vector<pair<ll,ll> > vp;
+
+ll divi(ll a,ll b)
+{
+    ll c = a/b;
+    if(a%b != 0)
+    {
+        c++;
+    }
+    return c;
+}
+
+void bfs(ll x,ll y,ll k)
+{
+    queue<pair<ll,ll> > q;
+    q.push(make_pair(x,y));
+    pos[x][y] = 0;
+    while(!q.empty())
+    {
+        pair<ll,ll> c = q.front();
+        //cout << c << N;
+        x = c.ff;
+        y = c.ss;
+        dp[x][y]++;
+        cp[x][y] += divi(pos[x][y],k);
+        q.pop();
+        ll a,b;
+        for(ll i = 0;i < 8;i++)
+        {
+            a = x+vp[i].ff;
+            b = y+vp[i].ss;
+            if((a >= n) || (a < 0) || (b >= m) || (b < 0) || pos[a][b] != -1)
+            {
+                continue;
+            }
+            pos[a][b] = pos[x][y] + 1;
+            q.push(make_pair(a,b));
+        }
+    }
+}
+
+int main()
+{
+    fastIO();
+    ll t,it;
+    cin >> t;
+    vp.pb(make_pair(1,2));
+    vp.pb(make_pair(1,-2));
+    vp.pb(make_pair(2,1));
+    vp.pb(make_pair(2,-1));
+    vp.pb(make_pair(-1,2));
+    vp.pb(make_pair(-1,-2));
+    vp.pb(make_pair(-2,1));
+    vp.pb(make_pair(-2,-1));
+    for(it = 1;it <= t;it++)
+    {
+        ll q,i,j,k,s = 0,x,y,c = 0,d,mini = LLONG_MAX;
+        cin >> n >> m;
+        string str[n];
+        for(i = 0;i < n;i++)
+        {
+            cin >> str[i];
+        }
+        for(i = 0;i < n;i++)
+        {
+            for(j = 0;j < m;j++)
+            {
+                if(str[i][j] != '.')
+                {
+                    for(ll id = 0;id < n;id++)
+                    {
+                        for(ll jd = 0;jd < m;jd++)
+                        {
+                            pos[id][jd] = -1;
+                        }
+                    }
+                    bfs(i,j,str[i][j]-'0');
+                    s++;
+                    for(ll id = 0;id < n;id++)
+                    {
+                        for(ll jd = 0;jd < m;jd++)
+                        {
+                            cout << pos[id][jd] << " ";
+                        }
+                        cout << N;
+                    }
+                }
+            }
+        }
+        //cout << s << N;
+        for(i = 0;i < n;i++)
+        {
+            for(j = 0;j < m;j++)
+            {
+                //cout << dp[i][j] << " ";
+                if(dp[i][j] == s)
+                {
+                    mini = min(mini,cp[i][j]);
+                }
+            }
+            //cout << N;
+        }
+
+        cout << "Case " << it << ": ";
+        if(mini == LLONG_MAX)
+        {
+            cout << "-1\n";
+        }
+        else
+        {
+            cout << mini << N;
+        }
+    }
+    return 0;
+}
+
